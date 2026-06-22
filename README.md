@@ -1,15 +1,7 @@
-# vaultcal
+# Deploy Radicale
 
-`vaultcal` provides a minimal “one‑click” setup wizard for a self‑hosted
-[Radicale](https://radicale.org/) server. The wizard:
+This repository contains a GitHub Actions workflow that deploys Radicale with a secure config.
 
-* Generates a TLS certificate (simulated – no external network calls).
-* Produces a default Radicale configuration that blocks the insecure
-  `XML‑RPC` and `DAV` methods.
-* Emits simple firewall rules that only allow traffic to the Radicale
-  port (default 5232).
+## Enable the workflow
 
-All logic lives in the standard library – no third‑party runtime
-dependencies.
-
-## Quick start
+To enable the workflow, simply add the following line to your `README.md` file:
