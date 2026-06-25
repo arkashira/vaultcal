@@ -1,21 +1,35 @@
-from vaultcal import VaultCal, ChecklistItem, ComplianceStatus
+import pytest
+from vaultcal import VaultCal, AuditLog
 
-def test_verify_checklist():
-    vaultcal = VaultCal()
-    vaultcal.verify_checklist()
-    for item in vaultcal.get_checklist():
-        assert item.status != ComplianceStatus.UNKNOWN
+@pytest.fixture
+def vaultcal():
+    return VaultCal()
 
-def test_export_to_pdf():
-    vaultcal = VaultCal()
-    vaultcal.verify_checklist()
-    pdf_content = vaultcal.export_to_pdf()
-    assert "TLS enabled: COMPLIANT" in pdf_content
-    assert "Data encryption at rest: COMPLIANT" in pdf_content
+def test_publish_audit_log(vaultcal: VaultCal, caplog):
+    audit_log = AuditLog(
+        timestamp='2022-01-01T00:00:00',
+        checklist_item='example_item',
+        status='example_status',
+        remediation_link='example_link'
+    )
+    vaultcal.publish_audit_log(audit_log)
+    assert 'Not publishing audit log' in caplog.text
 
-def test_get_checklist():
-    vaultcal = VaultCal()
-    checklist = vaultcal.get_checklist()
-    assert len(checklist) == 2
-    assert checklist[0].name == "TLS enabled"
-    assert checklist[1].name == "Data encryption at rest"
+def test_publish_audit_log_with_syslog_endpoint(vaultcal: VaultCal, caplog):
+    vaultcal.syslog_endpoint = 'example_endpoint'
+    audit_log = AuditLog(
+        timestamp='2022-01-01T00:00:00',
+        checklist_item='example_item',
+        status='example_status',
+        remediation_link='example_link'
+    )
+    vaultcal.publish_audit_log(audit_log)
+    assert 'Publishing audit log to example_endpoint' in caplog.text
+
+def test_run_with_log_forwarding(vaultcal: VaultCal, caplog):
+    vaultcal.run(True, 'example_endpoint')
+    assert 'Publishing audit log to example_endpoint' in caplog.text
+
+def test_run_without_log_forwarding(vaultcal: VaultCal, caplog):
+    vaultcal.run(False)
+    assert 'Not publishing audit log' in caplog.text

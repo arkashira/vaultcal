@@ -5,10 +5,10 @@ build-backend = "poetry.masonry.api"
 [tool.poetry]
 name = "vaultcal"
 version = "0.1.0"
-description = "GDPR/HIPAA compliance checklist"
+description = ""
 
 [tool.poetry.dependencies]
 python = "^3.8"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2"
+pytest = "^6.2.5"
